@@ -49,6 +49,15 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.search),
+        onPressed: (){
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>SearchingPage()));
+        },
+
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
       drawer: buildDrawer(),
       body: SingleChildScrollView(
         child: Center(
