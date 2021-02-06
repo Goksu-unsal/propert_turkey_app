@@ -5,6 +5,7 @@ import 'package:property_turkey_app/data/fake_http.dart';
 import 'package:property_turkey_app/models/propety.dart';
 import 'package:property_turkey_app/screens/propery_detail_page.dart';
 import 'package:property_turkey_app/screens/searching_page.dart';
+import 'package:url_launcher/url_launcher.dart' as urlLauncher;
 
 class HomePage extends StatefulWidget {
   @override
@@ -43,18 +44,19 @@ class _HomePageState extends State<HomePage> {
         actions: [
           IconButton(
             icon: Icon(Icons.search),
-            onPressed: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context)=> SearchingPage()));
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => SearchingPage()));
             },
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.search),
-        onPressed: (){
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>SearchingPage()));
+        onPressed: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => SearchingPage()));
         },
-
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
@@ -65,9 +67,7 @@ class _HomePageState extends State<HomePage> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               SlidableHelloBar(),
-              propertyObject(context, _property),
-              propertyObject(context, _property),
-              propertyObject(context, _property),
+              buildRecomendedPropList(),
             ],
           ),
         ),
@@ -75,7 +75,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget buildDrawer(){
+  Widget buildDrawer() {
     return Drawer(
       child: Column(
         mainAxisSize: MainAxisSize.max,
@@ -202,7 +202,9 @@ class _HomePageState extends State<HomePage> {
                 style: TextStyle(color: Colors.white),
               ),
               color: Colors.red.shade900,
-              onPressed: () {},
+              onPressed: () async {
+                return await urlLauncher.launch("https://api.whatsapp.com/send?phone=905422245531");
+              },
               hoverElevation: 8,
             ),
           ),
@@ -211,7 +213,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget propertyObject(BuildContext context, Property property) {
+  Widget PropertyObject(BuildContext context, Property property) {
     return _property == null
         ? CircularProgressIndicator()
         : Container(
@@ -224,7 +226,10 @@ class _HomePageState extends State<HomePage> {
             ),
             child: Column(
               children: [
-                Text(_property.tittle,style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold),),
+                Text(
+                  _property.tittle,
+                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                ),
                 CarouselSlider.builder(
                   itemCount: _property.assetUrls.length,
                   itemBuilder: (context, index, i) {
@@ -244,8 +249,12 @@ class _HomePageState extends State<HomePage> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: OutlineButton(
-                    onPressed: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=> PropertyDetailPage(_property)));
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  PropertyDetailPage(_property)));
                     },
                     borderSide: BorderSide(
                       color: Colors.red.shade100,
@@ -258,5 +267,45 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           );
+  }
+
+  buildRecomendedPropList() {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Text(
+              "Recomended Properties",
+              style: TextStyle(fontSize: 16),
+            ),
+            FlatButton(
+              padding: EdgeInsets.all(0),
+              child: Text(
+                "View all >>",
+                style: TextStyle(
+                    fontSize: 16,
+                    decoration: TextDecoration.underline,
+                    fontStyle: FontStyle.italic,
+                    color: Colors.red.shade900),
+              ),
+              onPressed: () {},
+            )
+          ],
+        ),
+        Container(
+          height: 500,
+          child: PageView.builder(
+            itemCount: 5,
+            itemBuilder: (context, index) {
+              return PropertyObject(context, _property);
+            },
+          ),
+        ),
+        SizedBox(
+          height: 200,
+        )
+      ],
+    );
   }
 }
